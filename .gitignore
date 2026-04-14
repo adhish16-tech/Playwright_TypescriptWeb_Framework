@@ -1,0 +1,29 @@
+node_modules/
+dist/
+
+# Test artifacts
+test-results/
+playwright-report/
+allure-results/
+allure-report/
+blob-report/
+
+# Auth state (contains sensitive tokens)
+config/.auth/
+
+# Environment files (use CI secrets instead)
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp

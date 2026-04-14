@@ -1,0 +1,26 @@
+{
+  "users": {
+    "standard": {
+      "username": "standard.user@example.com",
+      "firstName": "Standard",
+      "lastName": "User",
+      "role": "user"
+    },
+    "admin": {
+      "username": "admin.user@example.com",
+      "firstName": "Admin",
+      "lastName": "User",
+      "role": "admin"
+    },
+    "viewer": {
+      "username": "viewer.user@example.com",
+      "firstName": "Viewer",
+      "lastName": "User",
+      "role": "viewer"
+    }
+  },
+  "invalidCredentials": [
+    { "username": "nonexistent@example.com", "password": "wrongpass123", "scenario": "non-existent user" },
+    { "username": "Admin", "password": "wrongpassword", "scenario": "wrong password" }
+  ]
+}

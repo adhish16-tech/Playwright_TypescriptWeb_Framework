@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  playwright:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    environment:
+      - ENV=${ENV:-dev}
+      - BASE_URL=${BASE_URL}
+      - TEST_USERNAME=${TEST_USERNAME}
+      - TEST_PASSWORD=${TEST_PASSWORD}
+      - CI=true
+    volumes:
+      - ../test-results:/app/test-results
+      - ../playwright-report:/app/playwright-report
+    command: npx playwright test
+
+  playwright-smoke:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    environment:
+      - ENV=${ENV:-dev}
+      - BASE_URL=${BASE_URL}
+      - TEST_USERNAME=${TEST_USERNAME}
+      - TEST_PASSWORD=${TEST_PASSWORD}
+    volumes:
+      - ../test-results:/app/test-results
+    command: npx playwright test --grep @smoke
