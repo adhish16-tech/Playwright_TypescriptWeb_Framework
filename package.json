@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Organization-level Playwright TypeScript testing framework",
   "scripts": {
+    "postinstall": "npx playwright install --with-deps",
     "test": "playwright test",
     "test:smoke": "playwright test --grep @smoke",
     "test:regression": "playwright test --grep @regression",
