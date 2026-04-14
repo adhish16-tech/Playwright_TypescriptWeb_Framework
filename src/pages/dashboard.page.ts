@@ -1,4 +1,4 @@
-import { Page } from '@playwright/test';
+import { Page, expect } from '@playwright/test';
 import { BasePage } from './base.page';
 
 export class DashboardPage extends BasePage {
@@ -40,9 +40,10 @@ export class DashboardPage extends BasePage {
 
   // ─── Assertions ───────────────────────────────────────────────────────────
   async assertDashboardLoaded(): Promise<void> {
-    await this.assertURL(/.*dashboard.*/);
-    await this.assertElementVisible(this.navMenu);
-    await this.assertElementVisible(this.userAvatar);
+    // Soft assertions — all three are checked even if one fails
+    await expect.soft(this.page).toHaveURL(/.*dashboard.*/);
+    await expect.soft(this.navMenu).toBeVisible();
+    await expect.soft(this.userAvatar).toBeVisible();
   }
 
   async assertWelcomeMessage(username: string): Promise<void> {
