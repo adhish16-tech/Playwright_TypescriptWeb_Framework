@@ -19,6 +19,9 @@ config/.auth/
 # Logs
 *.log
 
+# Generated Excel test data (regenerate with: npx ts-node test-data/create-excel-data.ts)
+test-data/*.xlsx
+
 # OS
 .DS_Store
 Thumbs.db

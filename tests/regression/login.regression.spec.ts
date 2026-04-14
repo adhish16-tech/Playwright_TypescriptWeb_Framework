@@ -1,5 +1,15 @@
 import { test, expect } from '../../src/fixtures/page.fixtures';
-import usersData from '../../test-data/users.json';
+import { DataReader } from '../../src/helpers/data-reader.helper';
+
+// ─── Load test data (swap source as needed) ───────────────────────────────
+// From JSON:
+// const { invalidCredentials } = DataReader.fromJSON<{ invalidCredentials: { username: string; password: string; scenario: string }[] }>('test-data/users.json');
+
+// From Excel:
+const invalidCredentials = DataReader.fromExcel<{ username: string; password: string; scenario: string }>(
+  'test-data/login-data.xlsx',
+  'InvalidCredentials'
+);
 
 test.describe('Login - Regression Tests @regression', () => {
   test.beforeEach(async ({ loginPage }) => {
@@ -7,7 +17,7 @@ test.describe('Login - Regression Tests @regression', () => {
   });
 
   // ─── Data-driven: invalid credentials ────────────────────────────────────
-  for (const { username, password, scenario } of usersData.invalidCredentials) {
+  for (const { username, password, scenario } of invalidCredentials) {
     test(`should reject login - ${scenario}`, async ({ loginPage }) => {
       await loginPage.login(username, password);
       await loginPage.assertErrorMessage('Invalid credentials');
