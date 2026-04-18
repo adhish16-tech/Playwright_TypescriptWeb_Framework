@@ -124,5 +124,11 @@ export default defineConfig({
       name: 'mobile-safari',
       use: { ...devices['iPhone 13'] },
     },
+
+    // API tests — no browser, no setup dependency
+    {
+      name: 'api',
+      testMatch: /.*\.api\.spec\.ts/,
+    },
   ],
 });
