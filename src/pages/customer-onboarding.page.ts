@@ -26,6 +26,8 @@ export class CustomerOnboardingPage extends BasePage {
   private readonly languageDropdown        = this.page.locator('#CustomerLanguagePreference');
   private readonly customerEmailInput      = this.page.locator('#SaveCustomerModel_CustomerEmail');
   private readonly mobileNumberInput       = this.page.locator('#SaveCustomerModel_CustomerMobileNumber');
+  private readonly generateOtpButton       = this.page.locator('button').filter({ hasText: /generate otp/i });
+  private readonly mobileOtpInput          = this.page.locator('#MobileOTP');
 
   // ─── Customer Segmentation ────────────────────────────────────────────────
   private readonly customerSegmentDropdown = this.page.locator('#CustomerSegmentID');
@@ -123,6 +125,16 @@ export class CustomerOnboardingPage extends BasePage {
 
   async fillMobileNumber(value: string): Promise<void> {
     await this.fillInput(this.mobileNumberInput, value);
+  }
+
+  async clickGenerateOtp(): Promise<void> {
+    this.logger.info('Clicking Generate OTP');
+    await this.clickElement(this.generateOtpButton);
+  }
+
+  async enterMobileOtp(otp: string): Promise<void> {
+    this.logger.info('Entering mobile OTP');
+    await this.fillInput(this.mobileOtpInput, otp);
   }
 
   // ─── Customer Segmentation ────────────────────────────────────────────────
