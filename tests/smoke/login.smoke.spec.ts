@@ -1,43 +1,71 @@
-import { test, expect } from '../../src/fixtures/page.fixtures';
-import { DataFactory } from '../../src/helpers/data-factory.helper';
-import { epic, feature, story, severity, owner, description } from 'allure-js-commons';
+import { test } from '../../src/fixtures/page.fixtures';
 
 test.describe('Login - Smoke Tests @smoke @auth @login', () => {
   test.beforeEach(async ({ loginPage }) => {
-    await epic('Authentication');
-    await feature('Login');
-    await owner('QA Team');
     await loginPage.navigate();
-    await loginPage.assertLoginPageLoaded();
-  });
-
-  test.afterEach(async ({ page }) => {
-    await page.context().clearCookies();
   });
 
   test('should display login page correctly', async ({ loginPage }) => {
-    await story('Login Page Display');
-    await severity('normal');
-    await description('Verifies the login page renders with all required elements and correct title');
-    await loginPage.assertPageTitle('OrangeHRM');
     await loginPage.assertLoginPageLoaded();
   });
 
-  test('should login with valid credentials', async ({ loginPage, dashboardPage }) => {
-    await story('Valid Login');
-    await severity('critical');
-    await description('Verifies a user can successfully log in with valid credentials and reach the dashboard');
-    const credentials = DataFactory.getValidCredentials();
-    await loginPage.login(credentials.username, credentials.password);
-    await dashboardPage.assertDashboardLoaded();
-  });
+  test('should login, verify OTP, navigate to Add Customer and fill form', async ({
+    loginPage,
+    dashboardPage,
+    customerOnboardingPage,
+    page,
+  }) => {
+    // Login
+    await loginPage.login(
+      process.env.TEST_USERNAME ?? '',
+      process.env.TEST_PASSWORD ?? ''
+    );
 
-  test('should show error with invalid credentials', async ({ loginPage }) => {
-    await story('Invalid Login');
-    await severity('critical');
-    await description('Verifies the correct error message is shown when invalid credentials are entered');
-    const invalid = DataFactory.getInvalidCredentials();
-    await loginPage.login(invalid.username, invalid.password);
-    await loginPage.assertErrorMessage('Invalid credentials');
+    // OTP
+    await page.waitForURL(/LoginOtpVerification/);
+    await loginPage.enterOtp('123456');
+    await loginPage.verifyOtp();
+
+    // Navigate to Add Customer
+    await page.waitForURL(/Dashboard/);
+    await dashboardPage.openCustomerMenu();
+    await dashboardPage.goToManageCustomers();
+    await dashboardPage.clickAddCustomer();
+    await page.waitForURL(/AddCustomer/);
+
+    // Assert page loaded
+    await customerOnboardingPage.assertPageLoaded();
+
+    // Application Details
+    await customerOnboardingPage.selectCustomerType('1001');   // Fleet
+    await customerOnboardingPage.selectState('1');             // AP_TG
+
+    // Business Details
+    await customerOnboardingPage.fillBusinessName('Test Business');
+    await customerOnboardingPage.fillBusinessEmail('testbusiness@example.com');
+    await customerOnboardingPage.selectTypeOfBusiness('2');    // Sole Propreitorship
+    await customerOnboardingPage.fillPanDob('1990-01-01');
+    await customerOnboardingPage.fillPanNumber('ABCDE1234F');
+    await customerOnboardingPage.selectIdProofType('DL');      // Driving License
+    await customerOnboardingPage.fillIdProofNo('DL1234567890');
+
+    // Customer Details
+    await customerOnboardingPage.fillCustomerName('Test Customer');
+    await customerOnboardingPage.selectLanguagePreference('2'); // English
+    await customerOnboardingPage.fillCustomerEmail('testcustomer@example.com');
+    await customerOnboardingPage.fillMobileNumber('9999999999');
+
+    // Customer Segmentation
+    await customerOnboardingPage.selectCustomerSegment('1');   // General goods Transportation
+    await customerOnboardingPage.selectBuyingPattern('1');     // Pattern 1
+
+    // Bank Account Details
+    await customerOnboardingPage.fillBankName('Test Bank');
+    await customerOnboardingPage.fillAccountHolderName('Test Customer');
+    await customerOnboardingPage.fillAccountNumber('1234567890');
+    await customerOnboardingPage.fillIfscCode('TEST0001234');
+
+    // Save as draft
+    await customerOnboardingPage.clickSaveAsDraft();
   });
 });

@@ -2,9 +2,7 @@ import { test } from '../../src/fixtures/page.fixtures';
 import { epic, feature, story, severity, description } from 'allure-js-commons';
 
 test.describe('Dashboard - E2E Tests @regression @dashboard', () => {
-  test.use({ storageState: 'config/.auth/user.json' });
-
-  test.afterEach(async ({ page }) => {
+test.afterEach(async ({ page }) => {
     await page.context().clearCookies();
   });
 

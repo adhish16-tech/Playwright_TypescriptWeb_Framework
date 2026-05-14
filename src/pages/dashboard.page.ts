@@ -1,14 +1,13 @@
 import { Page, expect } from '@playwright/test';
 import { BasePage } from './base.page';
+import { Routes } from '../constants/routes';
 
 export class DashboardPage extends BasePage {
   // ─── Locators ─────────────────────────────────────────────────────────────
-  private readonly welcomeHeading  = this.page.getByRole('heading', { level: 1 });
-  private readonly navMenu         = this.page.locator('ul.oxd-main-menu');
-  private readonly userAvatar      = this.page.locator('.oxd-userdropdown-tab');
-  private readonly logoutButton    = this.page.getByRole('link', { name: 'Logout' });
-  private readonly notificationBell = this.page.locator('.oxd-topbar-header-notification');
-  private readonly sidebarToggle   = this.page.locator('.oxd-icon-button.oxd-main-menu-button');
+  private readonly sidebar            = this.page.locator('nav.sidebar-nav');
+  private readonly customerMenu       = this.page.locator('[title="Customer"]');
+  private readonly manageCustomersLink = this.page.locator('a[href="/Customer/ManageCustomers"]');
+  private readonly addCustomerButton  = this.page.locator('#addCustomerbtn');
 
   constructor(page: Page) {
     super(page);
@@ -16,37 +15,27 @@ export class DashboardPage extends BasePage {
 
   // ─── Actions ──────────────────────────────────────────────────────────────
   async navigate(): Promise<void> {
-    await this.navigateTo('/web/index.php/dashboard/index');
+    await this.navigateTo(Routes.dashboard);
   }
 
-  async logout(): Promise<void> {
-    this.logger.info('Logging out');
-    await this.clickElement(this.userAvatar);
-    await this.clickElement(this.logoutButton);
+  async openCustomerMenu(): Promise<void> {
+    this.logger.info('Opening Customer menu');
+    await this.clickElement(this.customerMenu);
   }
 
-  async openNotifications(): Promise<void> {
-    await this.clickElement(this.notificationBell);
+  async goToManageCustomers(): Promise<void> {
+    this.logger.info('Clicking Manage Customers');
+    await this.clickElement(this.manageCustomersLink);
+    await this.page.waitForURL(/ManageCustomers/);
   }
 
-  async toggleSidebar(): Promise<void> {
-    await this.clickElement(this.sidebarToggle);
-  }
-
-  async navigateToSection(sectionName: string): Promise<void> {
-    this.logger.info(`Navigating to section: ${sectionName}`);
-    await this.navMenu.getByRole('link', { name: sectionName }).click();
+  async clickAddCustomer(): Promise<void> {
+    this.logger.info('Clicking Add Customer');
+    await this.clickElement(this.addCustomerButton);
   }
 
   // ─── Assertions ───────────────────────────────────────────────────────────
   async assertDashboardLoaded(): Promise<void> {
-    // Soft assertions — all three are checked even if one fails
-    await expect.soft(this.page).toHaveURL(/.*dashboard.*/);
-    await expect.soft(this.navMenu).toBeVisible();
-    await expect.soft(this.userAvatar).toBeVisible();
-  }
-
-  async assertWelcomeMessage(username: string): Promise<void> {
-    await this.assertElementText(this.welcomeHeading, `Welcome, ${username}`);
+    await expect(this.sidebar).toBeVisible();
   }
 }

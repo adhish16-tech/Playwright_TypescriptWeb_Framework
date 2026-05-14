@@ -1,6 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
 import * as dotenv from 'dotenv';
-import path from 'path';
 
 dotenv.config({ path: `.env.${process.env.ENV || 'dev'}` });
 
@@ -77,40 +76,22 @@ export default defineConfig({
 
   // Browser projects
   projects: [
-    // Setup project (auth state)
-    {
-      name: 'setup',
-      testMatch: /.*\.setup\.ts/,
-    },
-
     // Chromium
     {
       name: 'chromium',
-      use: {
-        ...devices['Desktop Chrome'],
-        storageState: 'config/.auth/user.json',
-      },
-      dependencies: ['setup'],
+      use: { ...devices['Desktop Chrome'] },
     },
 
     // Firefox
     {
       name: 'firefox',
-      use: {
-        ...devices['Desktop Firefox'],
-        storageState: 'config/.auth/user.json',
-      },
-      dependencies: ['setup'],
+      use: { ...devices['Desktop Firefox'] },
     },
 
     // WebKit (Safari)
     {
       name: 'webkit',
-      use: {
-        ...devices['Desktop Safari'],
-        storageState: 'config/.auth/user.json',
-      },
-      dependencies: ['setup'],
+      use: { ...devices['Desktop Safari'] },
     },
 
     // Mobile Chrome
